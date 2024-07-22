@@ -1,0 +1,4 @@
+[arangodb*]
+env.tempfile /tmp/munin_arangodb_metrics
+env.login root
+env.password ARANGODB_ROOT_PASSWORD

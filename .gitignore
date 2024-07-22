@@ -1,0 +1,10 @@
+arangodb_queries
+arangodb_memory
+arangodb_rocksdb_errors
+arangodb_rocksdb_compaction
+arangodb_test_wrong_symlink
+arangodb_connections
+arangodb_threads
+arangodb_files
+arangodb_rocksdb_wal_size
+arangodb_rocksdb_wal

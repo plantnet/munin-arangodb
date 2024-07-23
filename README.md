@@ -10,12 +10,12 @@ cp munin_arangodb.sh /usr/local/munin/plugins/
 
 make it executable:
 ```sh
-chmod a+x /usr/local/munin/plugins/munin-arangodb.sh
+chmod a+x /usr/local/munin/plugins/munin_arangodb.sh
 ```
 
 create symlinks in `/etc/munin/plugins/` for each metrics you wish to record, for ex.
 ```sh
-ln -s /usr/local/munin/plugins/munin-arangodb.sh /etc/munin/plugins/arangodb_queries
+ln -s /usr/local/munin/plugins/munin_arangodb.sh /etc/munin/plugins/arangodb_queries
 ```
 (see "available metrics" below)
 

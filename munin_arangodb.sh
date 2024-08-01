@@ -22,6 +22,10 @@ output_config() {
 	echo "graph_category arangodb"
 
     case $NAME in
+        arangodb_arangodump)
+            echo "graph_title arangodump"
+            echo "arangodump_processes.label Running arangodump processes"
+            ;;
         arangodb_threads)
             echo "graph_title Threads"
             echo "threads.label Total threads"
@@ -94,9 +98,15 @@ read_metrics() {
 }
 
 output_values() {
-    read_metrics
+    if [ $NAME != "arangodb_arangodump" ]; then
+        read_metrics
+    fi
 
     case $NAME in
+        arangodb_arangodump)
+            VALUE=$(ps aux | grep arangodump | grep -v grep | grep -v arangodb_arangodump | wc -l)
+            echo "arangodump_processes.value $VALUE"
+            ;;
         arangodb_threads)
             VALUE=$(get_metrics_value "arangodb_process_statistics_number_of_threads")
             echo "threads.value $VALUE"
@@ -168,6 +178,7 @@ output_usage() {
     printf >&2 "%s - ArangoDB plugin for Munin\n" $NAME
     printf >&2 "Usage: %s [config]\n" $NAME
     printf >&2 "Symlink for different outputs:
+    arangodb_arangodump
     arangodb_threads
     arangodb_queries
     arangodb_memory

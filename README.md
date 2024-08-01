@@ -26,6 +26,7 @@ systemctl restart munin-node
 
 ## available metrics
 The following names can be used as symlink names to output different metrics
+ * arangodb_arangodump
  * arangodb_connections
  * arangodb_files
  * arangodb_memory

@@ -35,6 +35,7 @@ The following names can be used as symlink names to output different metrics
  * arangodb_rocksdb_errors
  * arangodb_rocksdb_wal
  * arangodb_rocksdb_wal_size
+ * arangodb_rocksdb_wal_ticks
  * arangodb_threads
 
 ## configuration

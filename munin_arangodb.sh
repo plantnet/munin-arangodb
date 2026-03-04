@@ -62,6 +62,11 @@ output_config() {
             echo "wal_files_size_archived.label Archived files size"
             echo "rocksdb_live_wal_files_size.label Live files size"
             ;;
+        arangodb_rocksdb_wal_ticks)
+            echo "graph_title RocksDB WAL ticks"
+            echo "wal_released_tick_flush.label Released tick (flush)"
+            echo "wal_released_tick_replication.label Released tick (replication)"
+            ;;
         arangodb_rocksdb_errors)
             echo "graph_title RocksDB errors"
             echo "rocksdb_background_errors.label Background errors"
@@ -151,6 +156,12 @@ output_values() {
             VALUE=$(get_metrics_value "rocksdb_live_wal_files_size")
             echo "wal_files_size_live.value $VALUE"
             ;;
+        arangodb_rocksdb_wal_ticks)
+            VALUE=$(get_metrics_value "rocksdb_wal_released_tick_flush")
+            echo "wal_released_tick_flush.value $VALUE"
+            VALUE=$(get_metrics_value "rocksdb_wal_released_tick_replication")
+            echo "wal_released_tick_replication.value $VALUE"
+			;;
         arangodb_rocksdb_errors)
             VALUE=$(get_metrics_value "rocksdb_background_errors")
             echo "rocksdb_background_errors.value $VALUE"
@@ -186,6 +197,7 @@ output_usage() {
     arangodb_files
     arangodb_rocksdb_wal
     arangodb_rocksdb_wal_size
+    arangodb_rocksdb_wal_ticks
     arangodb_rocksdb_errors
     arangodb_rocksdb_compaction
     \n"

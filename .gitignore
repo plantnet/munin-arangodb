@@ -8,4 +8,5 @@ arangodb_connections
 arangodb_threads
 arangodb_files
 arangodb_rocksdb_wal_size
+arangodb_rocksdb_wal_ticks
 arangodb_rocksdb_wal

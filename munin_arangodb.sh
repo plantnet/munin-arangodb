@@ -76,6 +76,46 @@ output_config() {
             echo "rocksdb_compaction_pending.label Compactions pending"
             echo "rocksdb_compaction_running.label Compactions running"
             ;;
+        arangodb_document_read_time)
+            echo "graph_title Document read time"
+            echo "doc_reads_10µs.label Document read <= 10µs"
+            echo "doc_reads_10µs.type DERIVE"
+            echo "doc_reads_10µs.draw AREA"
+            echo "doc_reads_10µs.min 0"
+            echo "doc_reads_1ms.label Document read <= 1ms"
+            echo "doc_reads_1ms.type DERIVE"
+            echo "doc_reads_1ms.draw STACK"
+            echo "doc_reads_1ms.min 0"
+            echo "doc_reads_100ms.label Document read <= 100ms"
+            echo "doc_reads_100ms.type DERIVE"
+            echo "doc_reads_100ms.draw STACK"
+            echo "doc_reads_100ms.min 0"
+            echo "doc_reads_1s.label Document read <= 1s"
+            echo "doc_reads_1s.type DERIVE"
+            echo "doc_reads_1s.draw STACK"
+            echo "doc_reads_1s.min 0"
+            ;;
+        arangodb_document_insert_time)
+            echo "graph_title Document insert time"
+            echo "doc_insert_10µs.label Document insert <= 10µs"
+            echo "doc_insert_1ms.label Document insert <= 1ms"
+            echo "doc_insert_100ms.label Document insert <= 100ms"
+            echo "doc_insert_1s.label Document insert <= 1s"
+            ;;
+        arangodb_document_replace_time)
+            echo "graph_title Document replace time"
+            echo "doc_replace_10µs.label Document replace <= 10µs"
+            echo "doc_replace_1ms.label Document replace <= 1ms"
+            echo "doc_replace_100ms.label Document replace <= 100ms"
+            echo "doc_replace_1s.label Document replace <= 1s"
+            ;;
+        arangodb_collection_lock_acquisition_time)
+            echo "graph_title Collection lock acquisition time"
+            echo "doc_replace_10µs.label Lock acquisition <= 10µs"
+            echo "doc_replace_1ms.label Lock acquisition <= 1ms"
+            echo "doc_replace_100ms.label Lock acquisition <= 100ms"
+            echo "doc_replace_1s.label Lock acquisition <= 1s"
+            ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME
             exit 2
@@ -171,6 +211,49 @@ output_values() {
             echo "rocksdb_compaction_pending.value $VALUE"
             VALUE=$(get_metrics_value "rocksdb_num_running_compactions")
             echo "rocksdb_compaction_running.value $VALUE"
+            ;;
+        arangodb_document_read_time)
+            VALUE=$(get_metrics_value 'arangodb_document_read_time_bucket{role="SINGLE",le="0.000010"}')
+            echo "doc_reads_10µs.value $VALUE"
+            V1=$VALUE
+            VALUE=$(get_metrics_value 'arangodb_document_read_time_bucket{role="SINGLE",le="0.001000"}')
+            echo "doc_reads_1ms.value $(($VALUE-$V1))"
+            V1=$VALUE
+            VALUE=$(get_metrics_value 'arangodb_document_read_time_bucket{role="SINGLE",le="0.100000"}')
+            echo "doc_reads_100ms.value $(($VALUE-$V1))"
+            V1=$VALUE
+            VALUE=$(get_metrics_value 'arangodb_document_read_time_bucket{role="SINGLE",le="1.000000"}')
+            echo "doc_reads_1s.value $(($VALUE-$V1))"
+            ;;
+        arangodb_document_insert_time)
+            VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="0.000010"}')
+            echo "doc_insert_10µs.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="0.001000"}')
+            echo "doc_insert_1ms.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="0.100000"}')
+            echo "doc_insert_100ms.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="1.000000"}')
+            echo "doc_insert_1s.value $VALUE"
+            ;;
+        arangodb_document_replace_time)
+            VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="0.000010"}')
+            echo "doc_replace_10µs.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="0.001000"}')
+            echo "doc_replace_1ms.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="0.100000"}')
+            echo "doc_replace_100ms.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="1.000000"}')
+            echo "doc_replace_1s.value $VALUE"
+            ;;
+        arangodb_collection_lock_acquisition_time)
+            VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="0.000010"}')
+            echo "lock_acquisition_10µs.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="0.001000"}')
+            echo "lock_acquisition_1ms.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="0.100000"}')
+            echo "lock_acquisition_100ms.value $VALUE"
+            VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="1.000000"}')
+            echo "lock_acquisition_1s.value $VALUE"
             ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME

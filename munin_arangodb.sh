@@ -16,6 +16,7 @@
 
 LOGIN="$login"
 PASSWORD="$password"
+# CACHE_FILE="/home/chouet/src/munin-arangodb/munin_arangodb_metrics"
 CACHE_FILE="$tempfile"
 
 output_config() {
@@ -98,23 +99,59 @@ output_config() {
         arangodb_document_insert_time)
             echo "graph_title Document insert time"
             echo "doc_insert_10µs.label Document insert <= 10µs"
+            echo "doc_insert_10µs.type DERIVE"
+            echo "doc_insert_10µs.draw AREA"
+            echo "doc_insert_10µs.min 0"
             echo "doc_insert_1ms.label Document insert <= 1ms"
+            echo "doc_insert_1ms.type DERIVE"
+            echo "doc_insert_1ms.draw STACK"
+            echo "doc_insert_1ms.min 0"
             echo "doc_insert_100ms.label Document insert <= 100ms"
+            echo "doc_insert_100ms.type DERIVE"
+            echo "doc_insert_100ms.draw STACK"
+            echo "doc_insert_100ms.min 0"
             echo "doc_insert_1s.label Document insert <= 1s"
+            echo "doc_insert_1s.type DERIVE"
+            echo "doc_insert_1s.draw STACK"
+            echo "doc_insert_1s.min 0"
             ;;
         arangodb_document_replace_time)
             echo "graph_title Document replace time"
             echo "doc_replace_10µs.label Document replace <= 10µs"
+            echo "doc_replace_10µs.type DERIVE"
+            echo "doc_replace_10µs.draw AREA"
+            echo "doc_replace_10µs.min 0"
             echo "doc_replace_1ms.label Document replace <= 1ms"
+            echo "doc_replace_1ms.type DERIVE"
+            echo "doc_replace_1ms.draw STACK"
+            echo "doc_replace_1ms.min 0"
             echo "doc_replace_100ms.label Document replace <= 100ms"
+            echo "doc_replace_100ms.type DERIVE"
+            echo "doc_replace_100ms.draw STACK"
+            echo "doc_replace_100ms.min 0"
             echo "doc_replace_1s.label Document replace <= 1s"
+            echo "doc_replace_1s.type DERIVE"
+            echo "doc_replace_1s.draw STACK"
+            echo "doc_replace_1s.min 0"
             ;;
         arangodb_collection_lock_acquisition_time)
             echo "graph_title Collection lock acquisition time"
-            echo "doc_replace_10µs.label Lock acquisition <= 10µs"
-            echo "doc_replace_1ms.label Lock acquisition <= 1ms"
-            echo "doc_replace_100ms.label Lock acquisition <= 100ms"
-            echo "doc_replace_1s.label Lock acquisition <= 1s"
+            echo "lock_acquisition_10µs.label Lock acquisition <= 10µs"
+            echo "lock_acquisition_10µs.type DERIVE"
+            echo "lock_acquisition_10µs.draw AREA"
+            echo "lock_acquisition_10µs.min 0"
+            echo "lock_acquisition_1ms.label Lock acquisition <= 1ms"
+            echo "lock_acquisition_1ms.type DERIVE"
+            echo "lock_acquisition_1ms.draw STACK"
+            echo "lock_acquisition_1ms.min 0"
+            echo "lock_acquisition_100ms.label Lock acquisition <= 100ms"
+            echo "lock_acquisition_100ms.type DERIVE"
+            echo "lock_acquisition_100ms.draw STACK"
+            echo "lock_acquisition_100ms.min 0"
+            echo "lock_acquisition_1s.label Lock acquisition <= 1s"
+            echo "lock_acquisition_1s.type DERIVE"
+            echo "lock_acquisition_1s.draw STACK"
+            echo "lock_acquisition_1s.min 0"
             ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME
@@ -135,6 +172,7 @@ get_metrics_value() {
 
 # cache metrics in local file during 3mn
 read_metrics() {
+    # echo "debug - read cached metrics only, from $CACHE_FILE"
     if [ ! -f "$CACHE_FILE" ] || [ ! $(find "$CACHE_FILE" -mmin -3 -print) ]; then
         AUTH=$(echo -ne "$LOGIN:$PASSWORD" | base64 --wrap 0)
         curl -s -H "Content-Type: application/json" -H "Authorization: Basic $AUTH" http://localhost:8529/_admin/metrics/v2 > "$CACHE_FILE"

@@ -266,32 +266,41 @@ output_values() {
         arangodb_document_insert_time)
             VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="0.000010"}')
             echo "doc_insert_10µs.value $VALUE"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="0.001000"}')
-            echo "doc_insert_1ms.value $VALUE"
+            echo "doc_insert_1ms.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="0.100000"}')
-            echo "doc_insert_100ms.value $VALUE"
+            echo "doc_insert_100ms.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_document_insert_time_bucket{role="SINGLE",le="1.000000"}')
-            echo "doc_insert_1s.value $VALUE"
+            echo "doc_insert_1s.value $(($VALUE-$V1))"
             ;;
         arangodb_document_replace_time)
             VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="0.000010"}')
             echo "doc_replace_10µs.value $VALUE"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="0.001000"}')
-            echo "doc_replace_1ms.value $VALUE"
+            echo "doc_replace_1ms.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="0.100000"}')
-            echo "doc_replace_100ms.value $VALUE"
+            echo "doc_replace_100ms.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_document_replace_time_bucket{role="SINGLE",le="1.000000"}')
-            echo "doc_replace_1s.value $VALUE"
+            echo "doc_replace_1s.value $(($VALUE-$V1))"
             ;;
         arangodb_collection_lock_acquisition_time)
             VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="0.000010"}')
-            echo "lock_acquisition_10µs.value $VALUE"
+            echo "lock_acquisition_10µs.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="0.001000"}')
-            echo "lock_acquisition_1ms.value $VALUE"
+            echo "lock_acquisition_1ms.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="0.100000"}')
-            echo "lock_acquisition_100ms.value $VALUE"
+            echo "lock_acquisition_100ms.value $(($VALUE-$V1))"
+            V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="1.000000"}')
-            echo "lock_acquisition_1s.value $VALUE"
+            echo "lock_acquisition_1s.value $(($VALUE-$V1))"
             ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME

@@ -77,6 +77,10 @@ output_config() {
             echo "rocksdb_compaction_pending.label Compactions pending"
             echo "rocksdb_compaction_running.label Compactions running"
             ;;
+        arangodb_rocksdb_engine_throttle)
+            echo "graph_title RocksDB engine throttle"
+            echo "rocksdb_engine_throttle_bps.label Engine throttle bps"
+            ;;
         arangodb_document_read_time)
             echo "graph_title Document read time"
             echo "doc_reads_10µs.label Document read <= 10µs"
@@ -153,6 +157,41 @@ output_config() {
             echo "lock_acquisition_1s.draw STACK"
             echo "lock_acquisition_1s.min 0"
             ;;
+        arangodb_scheduler_queue)
+            echo "graph_title Scheduler queue failures"
+            echo "scheduler_queue_length.label Queue length"
+            echo "scheduler_queued_jobs.label Queued jobs"
+            echo "scheduler_queue_failures.label Scheduler queue failures"
+            ;;
+        arangodb_connection_pool)
+            echo "graph_title Connections pool"
+            echo "pool_connections_current.label Current connections"
+            ;;
+        arangodb_server_statistics)
+            echo "graph_title Server statistics"
+            echo "server_statistics_user_percent.label user CPU time %"
+            echo "server_statistics_system_percent.label system CPU time %"
+            echo "server_statistics_iowait_percent.label iowait CPU time %"
+            ;;
+        arangodb_process_statistics)
+            echo "graph_title Process statistics"
+            echo "process_statistics_user_time.label user CPU time"
+            echo "process_statistics_system_time.label system CPU time"
+            ;;
+        arangodb_promises)
+            echo "graph_title Async promises"
+            echo "existing_promises.label Existing async promises"
+            ;;
+        arangodb_search_threads)
+            echo "graph_title Arangosearch threads"
+            echo "search_threads.label Search execution threads demand"
+            ;;
+        arangodb_collection_lock_time)
+            echo "graph_title Collection lock time"
+            echo "collection_lock_acquisition_micros_total.label Lock acquisition"
+            echo "collection_lock_timeouts_exclusive_total.label Exclusive lock timeouts"
+            echo "collection_lock_timeouts_write_total.label Write lock timeouts"
+            ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME
             exit 2
@@ -204,9 +243,12 @@ output_values() {
             ;;
         arangodb_queries)
             VALUE=$(get_metrics_value "arangodb_aql_current_query")
+            # protection against uint64 overflow bug < 3.12.6 @see https://github.com/arangodb/arangodb/issues/21777
+            # if number has more than 10 digits → error
+            if [ "${#VALUE}" -gt 10 ]; then
+                VALUE=""
+            fi
             echo "current_queries.value $VALUE"
-            VALUE=$(get_metrics_value "arangodb_scheduler_queue_length")
-            echo "scheduler_queue_length.value $VALUE"
             ;;
         arangodb_memory)
             VALUE=$(get_metrics_value "arangodb_aql_global_memory_usage")
@@ -249,6 +291,10 @@ output_values() {
             echo "rocksdb_compaction_pending.value $VALUE"
             VALUE=$(get_metrics_value "rocksdb_num_running_compactions")
             echo "rocksdb_compaction_running.value $VALUE"
+            ;;
+        arangodb_rocksdb_engine_throttle)
+            VALUE=$(get_metrics_value "rocksdb_engine_throttle_bps")
+            echo "rocksdb_engine_throttle_bps.value $VALUE"
             ;;
         arangodb_document_read_time)
             VALUE=$(get_metrics_value 'arangodb_document_read_time_bucket{role="SINGLE",le="0.000010"}')
@@ -301,6 +347,49 @@ output_values() {
             V1=$VALUE
             VALUE=$(get_metrics_value 'arangodb_collection_lock_acquisition_time_bucket{role="SINGLE",le="1.000000"}')
             echo "lock_acquisition_1s.value $(($VALUE-$V1))"
+            ;;
+        arangodb_scheduler_queue)
+            VALUE=$(get_metrics_value "arangodb_scheduler_queue_length")
+            echo "scheduler_queue_length.value $VALUE"
+            VALUE1=$(get_metrics_value "arangodb_scheduler_jobs_submitted_total")
+            VALUE2=$(get_metrics_value "arangodb_scheduler_jobs_dequeued_total")
+            echo "scheduler_queued_jobs.value $((VALUE1 - VALUE2))"
+            VALUE=$(get_metrics_value "arangodb_scheduler_queue_full_failures_total")
+            echo "scheduler_queue_failures.value $VALUE"
+            ;;
+        arangodb_connection_pool)
+            VALUE=$(get_metrics_value "arangodb_connection_pool_connections_current")
+            echo "pool_connections_current.value $VALUE"
+            ;;
+        arangodb_server_statistics)
+            VALUE=$(get_metrics_value "arangodb_server_statistics_user_percent")
+            echo "server_statistics_user_percent.value $VALUE"
+            VALUE=$(get_metrics_value "arangodb_server_statistics_system_percent")
+            echo "server_statistics_system_percent.value $VALUE"
+            VALUE=$(get_metrics_value "arangodb_server_statistics_iowait_percent")
+            echo "server_statistics_iowait_percent.value $VALUE"
+            ;;
+        arangodb_process_statistics)
+            VALUE=$(get_metrics_value "arangodb_process_statistics_user_time")
+            echo "process_statistics_user_time.value $VALUE"
+            VALUE=$(get_metrics_value "arangodb_process_statistics_system_time")
+            echo "process_statistics_system_time.value $VALUE"
+            ;;
+        arangodb_promises)
+            VALUE=$(get_metrics_value "arangodb_async_existing_promises")
+            echo "existing_promises.value $VALUE"
+            ;;
+        arangodb_search_threads)
+            VALUE=$(get_metrics_value "arangodb_search_execution_threads_demand")
+            echo "search_threads.value $VALUE"
+            ;;
+        arangodb_collection_lock_time)
+            VALUE=$(get_metrics_value "arangodb_collection_lock_acquisition_micros_total")
+            echo "collection_lock_acquisition_micros_total.value $VALUE"
+            VALUE=$(get_metrics_value "arangodb_collection_lock_timeouts_exclusive_total")
+            echo "collection_lock_timeouts_exclusive_total.value $VALUE"
+            VALUE=$(get_metrics_value "arangodb_collection_lock_timeouts_write_total")
+            echo "collection_lock_timeouts_write_total.value $VALUE"
             ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME

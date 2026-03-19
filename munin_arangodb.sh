@@ -158,9 +158,8 @@ output_config() {
             echo "lock_acquisition_1s.min 0"
             ;;
         arangodb_scheduler_queue)
-            echo "graph_title Scheduler queue failures"
+            echo "graph_title Scheduler queue"
             echo "scheduler_queue_length.label Queue length"
-            echo "scheduler_queued_jobs.label Queued jobs"
             echo "scheduler_queue_failures.label Scheduler queue failures"
             ;;
         arangodb_connection_pool)
@@ -351,9 +350,6 @@ output_values() {
         arangodb_scheduler_queue)
             VALUE=$(get_metrics_value "arangodb_scheduler_queue_length")
             echo "scheduler_queue_length.value $VALUE"
-            VALUE1=$(get_metrics_value "arangodb_scheduler_jobs_submitted_total")
-            VALUE2=$(get_metrics_value "arangodb_scheduler_jobs_dequeued_total")
-            echo "scheduler_queued_jobs.value $((VALUE1 - VALUE2))"
             VALUE=$(get_metrics_value "arangodb_scheduler_queue_full_failures_total")
             echo "scheduler_queue_failures.value $VALUE"
             ;;

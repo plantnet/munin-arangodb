@@ -38,7 +38,6 @@ output_config() {
         arangodb_queries)
             echo "graph_title AQL queries"
             echo "current_queries.label Current queries"
-            echo "scheduler_queue_length.label Queue length"
             ;;
         arangodb_memory)
             echo "graph_title Memory"
@@ -169,8 +168,17 @@ output_config() {
         arangodb_server_statistics)
             echo "graph_title Server statistics"
             echo "server_statistics_user_percent.label user CPU time %"
+            echo "server_statistics_user_percent.type DERIVE"
+            echo "server_statistics_user_percent.draw AREA"
+            echo "server_statistics_user_percent.min 0"
             echo "server_statistics_system_percent.label system CPU time %"
+            echo "server_statistics_system_percent.type DERIVE"
+            echo "server_statistics_system_percent.draw STACK"
+            echo "server_statistics_system_percent.min 0"
             echo "server_statistics_iowait_percent.label iowait CPU time %"
+            echo "server_statistics_iowait_percent.type DERIVE"
+            echo "server_statistics_iowait_percent.draw STACK"
+            echo "server_statistics_iowait_percent.min 0"
             ;;
         arangodb_process_statistics)
             echo "graph_title Process statistics"

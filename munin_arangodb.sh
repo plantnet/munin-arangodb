@@ -29,11 +29,13 @@ output_config() {
             ;;
         arangodb_threads)
             echo "graph_title Threads"
-            echo "threads.label Total threads"
+            echo "threads_worker.label Worker threads"
+            echo "threads_worker.min 0"
+            echo "threads_working.label Working threads"
+            echo "threads_working.draw AREA"
+            echo "threads_working.min 0"
             echo "threads_awake.label Awake threads"
             echo "threads_detached.label Detached threads"
-            echo "threads_worker.label Worker threads"
-            echo "threads_working.label Working threads"
             ;;
         arangodb_queries)
             echo "graph_title AQL queries"
@@ -65,7 +67,9 @@ output_config() {
         arangodb_rocksdb_wal_ticks)
             echo "graph_title RocksDB WAL ticks"
             echo "wal_released_tick_flush.label Released tick (flush)"
+            echo "wal_released_tick_flush.type DERIVE"
             echo "wal_released_tick_replication.label Released tick (replication)"
+            echo "wal_released_tick_replication.type DERIVE"
             ;;
         arangodb_rocksdb_errors)
             echo "graph_title RocksDB errors"
@@ -168,22 +172,28 @@ output_config() {
         arangodb_server_statistics)
             echo "graph_title Server statistics"
             echo "server_statistics_user_percent.label user CPU time %"
-            echo "server_statistics_user_percent.type DERIVE"
+            echo "server_statistics_user_percent.type GAUGE"
             echo "server_statistics_user_percent.draw AREA"
             echo "server_statistics_user_percent.min 0"
             echo "server_statistics_system_percent.label system CPU time %"
-            echo "server_statistics_system_percent.type DERIVE"
+            echo "server_statistics_system_percent.type GAUGE"
             echo "server_statistics_system_percent.draw STACK"
             echo "server_statistics_system_percent.min 0"
             echo "server_statistics_iowait_percent.label iowait CPU time %"
-            echo "server_statistics_iowait_percent.type DERIVE"
+            echo "server_statistics_iowait_percent.type GAUGE"
             echo "server_statistics_iowait_percent.draw STACK"
             echo "server_statistics_iowait_percent.min 0"
             ;;
         arangodb_process_statistics)
             echo "graph_title Process statistics"
             echo "process_statistics_user_time.label user CPU time"
+            echo "process_statistics_user_time.type DDERIVE"
+            echo "process_statistics_user_time.draw AREA"
+            echo "process_statistics_user_time.min 0"
             echo "process_statistics_system_time.label system CPU time"
+            echo "process_statistics_system_time.type DDERIVE"
+            echo "process_statistics_system_time.draw STACK"
+            echo "process_statistics_system_time.min 0"
             ;;
         arangodb_promises)
             echo "graph_title Async promises"
@@ -196,8 +206,11 @@ output_config() {
         arangodb_collection_lock_time)
             echo "graph_title Collection lock time"
             echo "collection_lock_acquisition_micros_total.label Lock acquisition"
+            echo "collection_lock_acquisition_micros_total.type DERIVE"
             echo "collection_lock_timeouts_exclusive_total.label Exclusive lock timeouts"
+            echo "collection_lock_timeouts_exclusive_total.type DERIVE"
             echo "collection_lock_timeouts_write_total.label Write lock timeouts"
+            echo "collection_lock_timeouts_write_total.type DERIVE"
             ;;
         *)
             printf >&2 "plugin name not managed: %s\n" $NAME
@@ -237,8 +250,6 @@ output_values() {
             echo "arangodump_processes.value $VALUE"
             ;;
         arangodb_threads)
-            VALUE=$(get_metrics_value "arangodb_process_statistics_number_of_threads")
-            echo "threads.value $VALUE"
             VALUE=$(get_metrics_value "arangodb_scheduler_num_awake_threads")
             echo "threads_awake.value $VALUE"
             VALUE=$(get_metrics_value "arangodb_scheduler_num_detached_threads")
@@ -423,6 +434,18 @@ output_usage() {
     arangodb_rocksdb_wal_ticks
     arangodb_rocksdb_errors
     arangodb_rocksdb_compaction
+    arangodb_rocksdb_engine_throttle
+    arangodb_document_read_time
+    arangodb_document_insert_time
+    arangodb_document_replace_time
+    arangodb_collection_lock_acquisition_time
+    arangodb_scheduler_queue
+    arangodb_connection_pool
+    arangodb_server_statistics
+    arangodb_process_statistics
+    arangodb_promises
+    arangodb_search_threads
+    arangodb_collection_lock_time
     \n"
 }
 

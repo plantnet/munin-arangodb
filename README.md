@@ -38,6 +38,8 @@ The following names can be used as symlink names to output different metrics
  * arangodb_rocksdb_errors
  * arangodb_rocksdb_compaction
  * arangodb_rocksdb_engine_throttle
+ * arangodb_rocksdb_bytes
+ * arangodb_rocksdb_compact_bytes
  * arangodb_document_read_time
  * arangodb_document_insert_time
  * arangodb_document_replace_time

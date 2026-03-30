@@ -84,6 +84,20 @@ output_config() {
             echo "graph_title RocksDB engine throttle"
             echo "rocksdb_engine_throttle_bps.label Engine throttle bps"
             ;;
+        arangodb_rocksdb_bytes)
+            echo "graph_title RocksDB bytes r/w"
+            echo "rocksdb_bytes_read.label Bytes read"
+            echo "rocksdb_bytes_read.type DERIVE"
+            echo "rocksdb_bytes_written.label Bytes written"
+            echo "rocksdb_bytes_written.type DERIVE"
+            ;;
+        arangodb_rocksdb_compact_bytes)
+            echo "graph_title RocksDB compact bytes r/w"
+            echo "rocksdb_compact_read_bytes.label Compact bytes read"
+            echo "rocksdb_compact_read_bytes.type DERIVE"
+            echo "rocksdb_compact_write_bytes.label Compact bytes written"
+            echo "rocksdb_compact_write_bytes.type DERIVE"
+            ;;
         arangodb_document_read_time)
             echo "graph_title Document read time"
             echo "doc_reads_10µs.label Document read <= 10µs"
@@ -314,6 +328,18 @@ output_values() {
             VALUE=$(get_metrics_value "rocksdb_engine_throttle_bps")
             echo "rocksdb_engine_throttle_bps.value $VALUE"
             ;;
+        arangodb_rocksdb_bytes)
+            VALUE=$(get_metrics_value "rocksdb_bytes_read")
+            echo "rocksdb_bytes_read.value $VALUE"
+            VALUE=$(get_metrics_value "rocksdb_bytes_written")
+            echo "rocksdb_bytes_written.value $VALUE"
+            ;;
+        arangodb_rocksdb_compact_bytes)
+            VALUE=$(get_metrics_value "rocksdb_compact_read_bytes")
+            echo "rocksdb_compact_read_bytes.value $VALUE"
+            VALUE=$(get_metrics_value "rocksdb_compact_write_bytes")
+            echo "rocksdb_compact_write_bytes.value $VALUE"
+            ;;
         arangodb_document_read_time)
             VALUE=$(get_metrics_value 'arangodb_document_read_time_bucket{role="SINGLE",le="0.000010"}')
             echo "doc_reads_10µs.value $VALUE"
@@ -435,6 +461,8 @@ output_usage() {
     arangodb_rocksdb_errors
     arangodb_rocksdb_compaction
     arangodb_rocksdb_engine_throttle
+    arangodb_rocksdb_bytes
+    arangodb_rocksdb_compact_bytes
     arangodb_document_read_time
     arangodb_document_insert_time
     arangodb_document_replace_time

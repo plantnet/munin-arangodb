@@ -87,16 +87,16 @@ output_config() {
         arangodb_rocksdb_bytes)
             echo "graph_title RocksDB bytes r/w"
             echo "rocksdb_bytes_read.label Bytes read"
-            # echo "rocksdb_bytes_read.type DERIVE"
+            echo "rocksdb_bytes_read.type DERIVE"
             echo "rocksdb_bytes_written.label Bytes written"
-            # echo "rocksdb_bytes_written.type DERIVE"
+            echo "rocksdb_bytes_written.type DERIVE"
             ;;
         arangodb_rocksdb_compact_bytes)
             echo "graph_title RocksDB compact bytes r/w"
             echo "rocksdb_compact_read_bytes.label Compact bytes read"
-            # echo "rocksdb_compact_read_bytes.type DERIVE"
+            echo "rocksdb_compact_read_bytes.type DERIVE"
             echo "rocksdb_compact_write_bytes.label Compact bytes written"
-            # echo "rocksdb_compact_write_bytes.type DERIVE"
+            echo "rocksdb_compact_write_bytes.type DERIVE"
             ;;
         arangodb_document_read_time)
             echo "graph_title Document read time"
